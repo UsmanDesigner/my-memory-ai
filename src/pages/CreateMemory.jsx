@@ -65,13 +65,28 @@ const CreateMemory = () => {
         {step === 1 && (
           <div className="h-[70vh] md:h-max overflow-y-auto scroll-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-            {Object.keys(categories).map((category) => (
+            {[
+              "Custom Memory",
+        ...Object.keys(categories), 
+         // Adding the custom option
+      ]
+            .map((category) => (
               <button
                 key={category}
                 onClick={() => {
-                  fetchSubCategories(category);
-                  setSelectedCategory(category);
-                  setStep(2);
+                  // fetchSubCategories(category);
+                  // setSelectedCategory(category);
+                  // setStep(2);
+                  if (category === "Custom Memory") {
+                    setSelectedCategory(category);
+                    setSelectedSubCategory(null);
+                    setItems([]);
+                    setStep(3);
+                  } else {
+                    fetchSubCategories(category);
+                    setSelectedCategory(category);
+                    setStep(2);
+                  }
                 }}
                 className={`p-4 text-white rounded-lg shadow-md h-max transition-transform flex justify-between items-center ${
                   selectedCategory === category
@@ -161,7 +176,7 @@ const CreateMemory = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto h-full md:max-h-[60vh] scroll-hidden">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto h-full md:max-h-[70vh] pb-2 scroll-hidden">
                 {[
                   {
                     name: "Custom",

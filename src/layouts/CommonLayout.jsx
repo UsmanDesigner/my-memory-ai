@@ -9,7 +9,7 @@ const CommonLayout = ({ children }) => {
 
   const handleLogout = () => {
     // Clear authentication data (e.g., tokens)
-    localStorage.removeItem("token"); 
+    localStorage.removeItem("user_uuid"); 
     // Redirect to login page
     navigate("/");
   };
