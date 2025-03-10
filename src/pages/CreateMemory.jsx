@@ -21,7 +21,10 @@ const CreateMemory = () => {
   const [items, setItems] = useState([]);
   const [customInput, setCustomInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [memoryLoading, setMemoryLoading] = useState(false);
+
   const [selectedItem, setSelectedItem] = useState(null);
+  const [memoryImage,setMemoryImage] = useState(null);
   const navigate = useNavigate();
 
   const handleBack = () => setStep((prev) => Math.max(1, prev - 1));
@@ -43,6 +46,73 @@ const CreateMemory = () => {
     }
     setLoading(false);
   };
+  const handleImageClick = async (item) => {
+    if (item.name === "Custom") {
+      setSelectedItem(item);
+      setCustomInput("");
+      return;
+    }
+
+    setSelectedItem(item);
+    setCustomInput(item.name);
+    setMemoryLoading(true);
+
+    const userUUID = localStorage.getItem("user_uuid");
+    if (!userUUID) {
+      console.error("User UUID not found in localStorage");
+      setMemoryLoading(false);
+      return;
+    }
+
+    const payload = {
+      user_uuid: userUUID,
+      category: selectedCategory,
+      subCategory: selectedSubCategory,
+      listItem: item.name,
+      image_url: item.image ,
+    };
+
+    try {
+     const API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL;
+     const response = await  axios.post(`${API_BASE_URL}/generate-image/`, payload);
+      console.log("API call successful", payload, response);
+      setMemoryImage(response.data.image_url);
+    } catch (error) {
+      console.error("Error calling API:", error);
+    } finally {
+      setMemoryLoading(false);
+    }
+  };
+  const handleGenerateMemory= async()=>{
+    setMemoryLoading(true);
+
+    const userUUID = localStorage.getItem("user_uuid");
+    if (!userUUID) {
+      console.error("User UUID not found in localStorage");
+      setMemoryLoading(false);
+      return;
+    }
+
+    const payload = {
+      user_uuid: userUUID,
+      category: null,
+      subCategory: null,
+      listItem: customInput,
+      image_url: null ,
+    };
+
+    try {
+     const API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL;
+     const response = await  axios.post(`${API_BASE_URL}/generate-image/`, payload);
+      console.log("API call successful", payload, response);
+      setMemoryImage(response.data.image_url);
+    } catch (error) {
+      console.error("Error calling API:", error);
+    } finally {
+      setMemoryLoading(false);
+    }
+
+  }
 
   return (
     <CommonLayout>
@@ -138,18 +208,22 @@ const CreateMemory = () => {
             </div>
           ))}
 
-        {step === 3 && (
+        {/* {step === 3 && (
           <>
-            {selectedItem && (
+          {memoryLoading && ( // Show overlay loader when loading
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+              <LoadingSpinner  size="20" color="border-green-500"/>
+            </div>
+          )}
+
+            {memoryImage && (
               <div className="w-full text-center mb-4">
                 <img
-                  src={selectedItem.image?? customImage}
-                  alt={selectedItem.name}
-                  className="w-24 h-24 mx-auto rounded-full shadow-md"
+                  src={memoryImage}
+                  alt="memory-image"
+                  className="w-50 h-50 mx-auto rounded-full shadow-md"
                 />
-                <p className="text-xl font-semibold text-gray-800 mt-2">
-                  {selectedItem.name}
-                </p>
+                
               </div>
             )}
 
@@ -185,10 +259,11 @@ const CreateMemory = () => {
                 ].map((item) => (
                   <button
                     key={item.name}
-                    onClick={() => {
-                      setSelectedItem(item);
-                      setCustomInput(item.name === "Custom" ? "" : item.name);
-                    }}
+                    onClick={() => handleImageClick(item)}
+                    // onClick={() => {
+                    //   setSelectedItem(item);
+                    //   setCustomInput(item.name === "Custom" ? "" : item.name);
+                    // }}
                     className={`p-4 border rounded-lg shadow-md hover:border-blue-100 transition-transform flex flex-col items-center gap-2 ${
                       selectedItem?.name === item.name
                         ? "border-blue-500 bg-blue-100"
@@ -208,11 +283,88 @@ const CreateMemory = () => {
               </div>
             )}
           </>
-        )}
+        )} */}
+        {step === 3 && (
+  <div className="relative">
+   {memoryLoading && (
+      <div className="absolute inset-0 flex flex-col  gap-2 justify-center items-center z-50 backdrop-blur-sm bg-white/30">
+        <LoadingSpinner size="24" color="border-green-500" />
+        <p className="text-gray-700 font-bold text-lg ml-2">Generating Memory...</p>
+      </div>
+    )}
+
+    {memoryImage && (
+      <div className="w-full text-center mb-4">
+        <img
+          src={memoryImage}
+          alt="memory-image"
+          className="w-50 h-50 mx-auto rounded-md shadow-md"
+        />
+      </div>
+    )}
+
+    {selectedItem?.name === "Custom" ? (
+      <div className="mt-6 p-6 bg-gray-100 rounded-lg shadow-md text-center flex flex-col items-center mb-4">
+        <button
+          onClick={() => setSelectedItem(null)}
+          className="self-start mb-4 px-3 py-1 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+        >
+          ← Back
+        </button>
+        <h3 className="text-xl font-bold text-gray-700">
+          Create Your Custom Memory
+        </h3>
+        <input
+          type="text"
+          value={customInput}
+          onChange={(e) => setCustomInput(e.target.value)}
+          placeholder="Enter custom memory name..."
+          className="mt-4 p-3 text-black w-full border rounded-md shadow-sm focus:ring-2 focus:ring-purple-500"
+        />
+        <button className="mt-4 px-6 py-2 flex items-center gap-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition shadow-md" 
+        onClick={handleGenerateMemory}
+        >
+          <FaPlusSquare className="w-5 h-5" /> Generate Memory
+        </button>
+      </div>
+    ) : (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto h-full md:max-h-[70vh] pb-2 scroll-hidden">
+        {[
+          { name: "Custom" },
+          ...(items || []),
+        ].map((item) => (
+          <button
+            key={item.name}
+            onClick={() => handleImageClick(item)}
+            className={`p-4 border rounded-lg shadow-md hover:border-blue-100 transition-transform flex flex-col items-center gap-2 ${
+              selectedItem?.name === item.name
+                ? "border-blue-500 bg-blue-100"
+                : "bg-white border-gray-300"
+            }`}
+          >
+            <img
+              src={item.image ?? customImage}
+              alt={item.name}
+              className="w-full h-[100px] md:h-[140px] object-cover rounded-md"
+            />
+            <p className="text-lg font-bold text-gray-800">{item.name}</p>
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
 
         <div className="flex justify-between mt-6">
           <button
-            onClick={step === 1 ? () => navigate("/") : handleBack}
+          onClick={
+            step === 1
+              ? () => navigate("/")
+              : selectedSubCategory === null
+              ? () => setStep(1)
+              : handleBack
+          }
             className={`px-6 py-2 flex items-center gap-2 rounded-md transition shadow-md ${
               step === 1
                 ? "bg-red-500 text-white hover:bg-red-600"
