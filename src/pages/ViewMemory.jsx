@@ -4,10 +4,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import CommonLayout from "../layouts/CommonLayout";
+import { useNavigate } from "react-router";
 
 const ViewMemory = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -46,7 +48,16 @@ const ViewMemory = () => {
 
   return (
     <CommonLayout>
-      <div className="h-max mx-auto max-w-full">
+      <div className="h-max mx-auto max-w-full w-full mb-auto">
+        <div className="w-full flex">
+        <button
+          onClick={() => navigate("/")}
+          className="mr-auto  mb-4 px-3 py-1 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+        >
+          ← Back
+        </button>
+        </div>
+     
         <h2 className="text-center text-2xl font-bold mb-4">Memories</h2>
 
         {/* Show loader while fetching */}
