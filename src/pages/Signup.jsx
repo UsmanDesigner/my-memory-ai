@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import CommonLayout from "../layouts/CommonLayout";
-import Logo from "../assets/logo.jpeg";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -51,7 +50,6 @@ const Signup = () => {
 
   return (
     <CommonLayout>
-      <img src={Logo} alt="App Logo" className="w-30 h-30 mb-4 mx-auto rounded-md" />
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Your Account 🎉</h2>
       <p className="text-gray-500 text-center mb-6">Sign up to get started!</p>
 

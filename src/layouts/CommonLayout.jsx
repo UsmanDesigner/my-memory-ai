@@ -1,5 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
+import Logo from "../assets/logo.jpeg";
+
 
 const CommonLayout = ({ children }) => {
   const location = useLocation();
@@ -32,6 +34,8 @@ const CommonLayout = ({ children }) => {
       {/* Centered Content Box (90vh) */}
       <main  className={`flex justify-center items-center ${hideLogout ? "h-full" : "h-[92vh]"} w-full`}>
         <div className="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center w-full md:w-2xl min-h-[40vh] h-full md:h-max flex flex-col justify-center items-center">
+      <img src={Logo} alt="App Logo" className="w-30 h-30 mb-4 mx-auto rounded-md" />
+
           {children}
         </div>
       </main>

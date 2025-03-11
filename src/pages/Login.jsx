@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import React from "react";
-import Logo from "../assets/logo.jpeg";
 import CommonLayout from "../layouts/CommonLayout";
 
 const Login = () => {
@@ -64,11 +63,7 @@ const Login = () => {
 
   return (
     <CommonLayout>
-      <img
-        src={Logo}
-        alt="App Logo"
-        className="w-30 h-30 mb-4 mx-auto rounded-md"
-      />
+     
 
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Welcome Back 👋
