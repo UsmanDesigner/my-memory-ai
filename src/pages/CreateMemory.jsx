@@ -144,9 +144,7 @@ const CreateMemory = () => {
               <button
                 key={category}
                 onClick={() => {
-                  // fetchSubCategories(category);
-                  // setSelectedCategory(category);
-                  // setStep(2);
+                  
                   if (category === "Custom Memory") {
                     setSelectedCategory(category);
                     setSelectedSubCategory(null);
